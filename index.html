@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pengumuman Kelulusan SD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-indigo-200 min-h-screen flex flex-col items-center justify-center p-4 gap-4">
+
+  <audio id="audioLulus" src="https://cdn.jsdelivr.net/gh/ierulofficial/pengumumankelulusan-sd3jojo/lulus.mp3" preload="auto"></audio>
+  <audio id="audioTidakLulus" src="https://cdn.jsdelivr.net/gh/ierulofficial/pengumumankelulusan-sd3jojo/gagal.mp3" preload="auto"></audio>
+
+  <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 relative">
+    
+    <div class="text-center mb-6">
+      <img src="https://lh3.googleusercontent.com/u/0/d/15e-vb72Me2GU9ry98MdRswT0BKn83ecq" alt="Logo Sekolah" class="w-16 h-16 mx-auto mb-2 drop-shadow-md">
+      <p class="text-[10px] text-indigo-600 font-bold tracking-widest uppercase">PENGUMUMAN KELULUSAN <br> TAHUN AJARAN 2025/2026</p>
+      <h1 class="text-2xl font-black text-indigo-950 leading-tight uppercase mt-0.5">SD 3 JOJO</h1>
+      <div class="w-20 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent mx-auto mt-2 rounded-full"></div>
+    </div>
+
+    <div id="loginSection">
+      <p class="text-center text-xs text-gray-500 mb-4">Silakan masukkan NISN dan Password untuk melihat kelulusan.</p>
+      <div class="space-y-3">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">NISN Siswa</label>
+            <button onclick="bukaModal()" class="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold underline focus:outline-none">Cari NISN?</button>
+          </div>
+          <input type="text" id="nisn" placeholder="Contoh: 0123456789" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition">
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="block text-[11px] font-bold text-gray-700 uppercase tracking-wider">Password</label>
+            <div class="relative group cursor-help">
+              <div class="bg-gray-200 text-gray-600 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold hover:bg-indigo-100 hover:text-indigo-600 transition">?</div>
+              <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block w-56 bg-gray-800 text-white text-[10px] p-2.5 rounded-lg shadow-xl z-10 leading-relaxed border border-gray-700">
+                Masukkan password/sandi dengan mengetik tanggal lahir.
+                Gunakan format <span class="text-yellow-300 font-bold">HHBBTTTT</span> yakni H untuk hari, B untuk bulan, dan T untuk Tahun.
+                Contoh tanggal lahir <span class="text-green-300 font-bold">17 Agustus 2014</span> maka diketik <span class="text-green-300 font-bold">17082014</span>.
+                <div class="absolute top-full right-1.5 -mt-1 border-4 border-transparent border-t-gray-800"></div>
+              </div>
+            </div>
+          </div>
+          <div class="relative">
+            <input type="password" id="password" placeholder="Contoh: 17082014 (HHBBTTTT)" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition pr-10">
+            <button type="button" onclick="toggleIntipPassword()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 focus:outline-none">
+              <svg id="iconIntipPwd" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button onclick="prosesLogin()" id="btnLogin" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm py-2.5 rounded-xl shadow-md transition mt-2 flex justify-center items-center">
+          <span id="btnText">Masuk & Lihat Hasil</span>
+        </button>
+        <div id="errorMsg" class="hidden text-center text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-100"></div>
+      </div>
+    </div>
+
+    <div id="loadingSection" class="hidden text-center py-8 space-y-4 my-auto">
+      <div class="relative w-20 h-20 mx-auto">
+        <div class="absolute inset-0 border-4 border-indigo-200 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-indigo-600 font-bold text-xl animate-pulse">🔒</div>
+      </div>
+      <div class="space-y-1">
+        <p class="text-sm font-black text-indigo-950 tracking-wide uppercase">Membuka Amplop Kelulusan...</p>
+        <p class="text-[11px] text-gray-400 italic">"Harap tenang, sistem sedang memuat berkas nilai Anda."</p>
+      </div>
+    </div>
+
+    <div id="resultSection" class="hidden text-center space-y-4">
+      <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 flex items-center gap-3 text-left">
+        <img id="studentPhoto" src="" alt="Foto Siswa" class="w-20 h-20 rounded-full object-cover border-2 border-white shadow-sm bg-indigo-200 shrink-0">
+        <div>
+          <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Identitas Siswa</p>
+          <p id="studentName" class="text-base sm:text-lg font-bold text-indigo-900 leading-tight"></p>
+          <p id="studentNisnDisplay" class="text-xs font-mono text-indigo-600 font-bold mt-0.5"></p>
+        </div>
+      </div>
+
+      <div id="statusBox" class="p-4 rounded-xl border-2 shadow-sm flex flex-col items-center justify-center gap-3 relative overflow-hidden">
+        <div id="containerTombolPeringkat"></div>
+        <div class="mt-2">
+          <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">Dinyatakan</p>
+          <p id="graduationStatus" class="text-3xl font-black tracking-wider"></p>
+        </div>
+        <div class="flex gap-2 w-full justify-center mt-1">
+          <a id="linkSK" href="#" target="_blank" class="bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11px] py-1.5 px-3 rounded-lg border shadow-sm flex items-center justify-center transition flex-1 text-center">SK Kelulusan</a>
+          <a id="linkSKL" href="#" target="_blank" class="bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11px] py-1.5 px-3 rounded-lg border shadow-sm flex items-center justify-center transition flex-1 text-center">Unduh SKL</a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-1">
+        <button onclick="bukaModalNilai('Transkrip')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] sm:text-[10px] py-2 px-1 rounded-lg shadow transition text-center leading-tight">Transkrip Nilai</button>
+        <button onclick="bukaModalNilai('Rapor')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[9px] sm:text-[10px] py-2 px-1 rounded-lg border border-indigo-200 transition text-center leading-tight">Nilai Rapor</button>
+        <button onclick="bukaModalNilai('TKA')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[9px] sm:text-[10px] py-2 px-1 rounded-lg border border-indigo-200 transition text-center leading-tight">Nilai TKA</button>
+      </div>
+
+      <div class="text-left bg-gray-50 p-3 rounded-xl border border-gray-200">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Catatan Sekolah:</p>
+        <p id="schoolNote" class="text-xs text-gray-600 italic"></p>
+      </div>
+
+      <button onclick="logout()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-xs py-2 rounded-xl transition">Keluar Halaman</button>
+    </div>
+
+  </div>
+
+  <div class="text-center text-[10px] sm:text-[11px] text-indigo-950/60 font-semibold tracking-wide uppercase">
+    © 2026 Fachrul3. All Rights Reserved.
+  </div>
+
+  <div id="searchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-5 w-full max-w-sm shadow-xl space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-gray-800 text-sm">Cari NISN</h3>
+        <button onclick="tutupModal()" class="text-gray-400 text-lg font-bold">×</button>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="inputNamaCari" placeholder="Ketik nama lengkap atau panggilan..." class="w-full px-3 py-1.5 text-xs border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        <button onclick="prosesCariNama()" class="bg-indigo-600 text-white px-3 py-1.5 rounded-xl font-medium text-xs hover:bg-indigo-700">Cari</button>
+      </div>
+      <div id="hasilCariSiswa" class="max-h-40 overflow-y-auto space-y-1.5 text-xs"></div>
+    </div>
+  </div>
+
+  <div id="gradeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-5 w-full max-w-xl shadow-2xl space-y-2">
+      <div class="flex justify-between items-start border-b pb-2">
+        <div>
+          <h3 id="judulModalNilai" class="font-bold text-gray-900 text-base leading-tight"></h3>
+          <p id="subJudulModalNilai" class="text-[11px] text-gray-500 mt-0.5 leading-relaxed"></p>
+        </div>
+        <div class="flex items-center gap-2 ml-4">
+          <button onclick="toggleBlurNilai()" class="text-gray-400 hover:text-indigo-600 p-1 rounded-lg hover:bg-gray-100" title="Tampilkan/Sembunyikan Nilai">
+            <svg id="iconMata" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+            </svg>
+          </button>
+          <button onclick="tutupModalNilai()" class="text-gray-400 text-lg font-bold">×</button>
+        </div>
+      </div>
+      <div id="containerTabelNilai" class="overflow-x-auto max-h-80 text-[11px] sm:text-xs transition duration-300 pt-1"></div>
+    </div>
+  </div>
+
+  <div id="rankModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center transform scale-100 transition-transform duration-300 relative">
+      <button onclick="tutupModalPeringkat()" class="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-2xl font-bold">×</button>
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Selamat! Anda Meraih</p>
+      <div id="rankIconBox" class="text-6xl mb-2 drop-shadow-lg"></div>
+      <h2 class="text-3xl font-black text-indigo-900 mb-1">Peringkat <span id="rankNumberDisplay" class="text-indigo-600"></span></h2>
+      <p class="text-[11px] text-gray-500 mt-2">Dari seluruh siswa kelas VI di angkatan ini.</p>
+    </div>
+  </div>
+
+  <script>
+    let cacheSiswa = null;
+    let nilaiDiburamkan = true;
+
+    function formatIndo(angka) {
+      if (isNaN(angka) || angka === null || angka === "") return "-";
+      return Number(angka).toFixed(2).replace('.', ',');
+    }
+
+    function toggleIntipPassword() {
+      const p = document.getElementById('password');
+      const icon = document.getElementById('iconIntipPwd');
+      if (p.type === 'password') {
+        p.type = 'text';
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />`;
+      } else {
+        p.type = 'password';
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />`;
+      }
+    }
+
+    function pemicuKonfeti() {
+      var duration = 2.5 * 1000;
+      var end = Date.now() + duration;
+      (function frame() {
+        confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) { requestAnimationFrame(frame); }
+      }());
+    }
+
+    function showError(msg) {
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.innerText = msg; errorMsg.classList.remove('hidden');
+    }
+
+    // MODIFIKASI: Penambahan Waktu Tunggu 10 Detik, Loading Section, dan UNLOCK AUDIO
+    function prosesLogin() {
+      const nisn = document.getElementById('nisn').value;
+      const password = document.getElementById('password').value;
+      const btnText = document.getElementById('btnText');
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (!nisn || !password) { showError("Harap isi semua kolom!"); return; }
+      
+      // --- PERBAIKAN SUARA: "Membuka kunci" izin pemutaran audio browser ---
+      try {
+        const audioL = document.getElementById('audioLulus');
+        const audioT = document.getElementById('audioTidakLulus');
+        // Pancing browser memutar suara sesaat lalu segera dijeda
+        audioL.play().then(() => { audioL.pause(); audioL.currentTime = 0; }).catch(e => console.log("Audio diizinkan nanti"));
+        audioT.play().then(() => { audioT.pause(); audioT.currentTime = 0; }).catch(e => console.log("Audio diizinkan nanti"));
+      } catch(e) {}
+      // ----------------------------------------------------------------------
+
+      btnText.innerText = "Memeriksa data...";
+      errorMsg.classList.add('hidden');
+      
+      // Matikan Form Login, Nyalakan Loading Layar Transisi
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('loadingSection').classList.remove('hidden');
+
+      // Proteksi Server Timeout agar tidak stuck berputar
+      const serverTimeout = setTimeout(function() {
+        document.getElementById('loadingSection').classList.add('hidden');
+        document.getElementById('loginSection').classList.remove('hidden');
+        showError("Koneksi server tidak merespon. Silakan coba lagi.");
+      }, 15000);
+
+      // Pastikan fungsi backend dipanggil cekLogin sesuai codegs1.txt
+      google.script.run
+        .withSuccessHandler(function(response) {
+          clearTimeout(serverTimeout);
+          btnText.innerText = "Masuk & Lihat Hasil";
+          
+          if (response.status === "success") {
+            cacheSiswa = response; // codegs1.txt mengirim object murni (tanpa bungkus .data)
+            
+            // Tahan di Loading Screen selama persis 10 detik
+            setTimeout(function() {
+              document.getElementById('loadingSection').classList.add('hidden');
+              tampilkanHasil(cacheSiswa);
+            }, 10000);
+
+          } else { 
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            showError(response.message); 
+          }
+        })
+        .withFailureHandler(function(err) {
+          clearTimeout(serverTimeout);
+          btnText.innerText = "Masuk & Lihat Hasil";
+          document.getElementById('loadingSection').classList.add('hidden');
+          document.getElementById('loginSection').classList.remove('hidden');
+          showError("Koneksi gagal: " + err.message);
+        }).cekLogin(nisn, password);
+    }
+
+    // MURNI DARI INDEXHTML1.TXT (+ Audio)
+    function tampilkanHasil(data) {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('resultSection').classList.remove('hidden');
+      
+      document.getElementById('studentName').innerText = data.nama;
+      document.getElementById('studentNisnDisplay').innerText = "NISN. " + data.nisn;
+      document.getElementById('studentPhoto').src = data.foto;
+      document.getElementById('schoolNote').innerText = data.catatan || "-";
+      
+      document.getElementById('linkSK').href = data.linkSK;
+      document.getElementById('linkSKL').href = data.linkSKL;
+
+      const statusBox = document.getElementById('statusBox');
+      const gradStatus = document.getElementById('graduationStatus');
+      const wadahPeringkat = document.getElementById('containerTombolPeringkat');
+      wadahPeringkat.innerHTML = "";
+
+      if (data.hasil.toUpperCase() === "LULUS") {
+        pemicuKonfeti();
+        gradStatus.innerText = "LULUS";
+        statusBox.className = "p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-3 bg-green-50 border-green-400 text-green-700 relative overflow-hidden";
+        // MODIFIKASI: Memicu suara saat Lulus
+        try { document.getElementById('audioLulus').play(); } catch(e) {} 
+        
+        if (data.peringkat && data.peringkat !== "-" && !isNaN(data.peringkat)) {
+          wadahPeringkat.innerHTML = `
+            <button onclick="bukaModalPeringkat(${data.peringkat})" class="absolute top-2 right-2 flex items-center gap-1 bg-green-200 hover:bg-green-300 text-green-800 text-[9px] font-bold px-2 py-1 rounded-md transition shadow-sm z-10">
+              Lihat Peringkat
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3 h-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              </svg>
+            </button>`;
+        }
+      } else {
+        gradStatus.innerText = "TIDAK LULUS";
+        statusBox.className = "p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-3 bg-red-50 border-red-400 text-red-700 relative overflow-hidden";
+        // MODIFIKASI: Memicu suara saat Tidak Lulus
+        try { document.getElementById('audioTidakLulus').play(); } catch(e) {}
+      }
+    }
+
+    // MURNI DARI INDEXHTML1.TXT (Karakter emoji yang sempat rusak telah diperbaiki)
+    function bukaModalPeringkat(peringkat) {
+      document.getElementById('rankModal').classList.remove('hidden');
+      document.getElementById('rankNumberDisplay').innerText = peringkat;
+      let p = parseInt(peringkat);
+      let iconHTML = "";
+      if (p === 1) iconHTML = "🏆";
+      else if (p === 2) iconHTML = "🥈";
+      else if (p === 3) iconHTML = "🥉";
+      else iconHTML = "🏅";
+      
+      document.getElementById('rankIconBox').innerText = iconHTML;
+      pemicuKonfeti();
+    }
+    
+    function tutupModalPeringkat() {
+      document.getElementById('rankModal').classList.add('hidden');
+    }
+
+    // MURNI DARI INDEXHTML1.TXT (Tabel Nilai & Perilaku Blur asli)
+    function bukaModalNilai(jenis) {
+      if(!cacheSiswa || !cacheSiswa.nilai) return;
+      
+      const modal = document.getElementById('gradeModal');
+      const judul = document.getElementById('judulModalNilai');
+      const subJudul = document.getElementById('subJudulModalNilai');
+      const container = document.getElementById('containerTabelNilai');
+      
+      nilaiDiburamkan = true;
+      document.getElementById('iconMata').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />`;
+      container.className = "overflow-x-auto max-h-80 text-[11px] sm:text-xs transition duration-300 pt-1 blur-sm select-none opacity-80";
+      
+      modal.classList.remove('hidden');
+      
+      let html = "";
+      if (jenis === 'Transkrip') {
+        judul.innerText = "Transkrip Nilai";
+        subJudul.innerText = "Rata-rata nilai rapor Kelas 5 (semester 9 dan 10) sampai dengan Kelas 6 (semester 11 dan 12).";
+        
+        const t = cacheSiswa.nilai.transkrip;
+        const mapels = ["Pendidikan Agama dan Budi Pekerti", "Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "Ilmu Pengetahuan Alam dan Sosial", "Pendidikan Jasmani Olahraga dan Kesehatan", "Seni dan Budaya", "Bahasa Inggris"];
+        
+        let total = 0; mapels.forEach((m, idx) => total += t[idx]); total += t[8];
+        let rata = formatIndo(total / 9);
+        
+        html = `<table class="w-full border-collapse border border-gray-300 text-left">
+          <thead><tr class="bg-gray-100 text-xs sm:text-sm"><th class="border border-gray-300 p-2 w-12 text-center">No.</th><th class="border border-gray-300 p-2 text-center">Mata Pelajaran</th><th class="border border-gray-300 p-2 w-24 text-center">Nilai</th></tr></thead>
+          <tbody>`;
+        
+        mapels.forEach((m, idx) => {
+          html += `<tr><td class="border border-gray-300 p-2 text-center">${idx+1}</td><td class="border border-gray-300 p-2">${m}</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(t[idx])}</td></tr>`;
+        });
+        
+        html += `<tr><td class="border border-gray-300 p-2 text-center">9</td><td class="border border-gray-300 p-2 font-semibold">Muatan Lokal</td><td class="border border-gray-300 p-2 text-center"></td></tr>`;
+        html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">a. Bahasa Jawa</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(t[8])}</td></tr>`;
+        html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">b. -</td><td class="border border-gray-300 p-2 text-center">-</td></tr>`;
+        html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">c. -</td><td class="border border-gray-300 p-2 text-center">-</td></tr>`;
+        html += `<tr class="bg-indigo-50 font-bold"><td colspan="2" class="border border-gray-300 p-2 text-center">Rata-rata</td><td class="border border-gray-300 p-2 text-center text-indigo-700">${rata}</td></tr></tbody></table>`;
+        
+      } else if (jenis === 'Rapor') {
+        judul.innerText = "Nilai Rapor";
+        subJudul.innerText = "Rata-rata nilai rapor 5 semester terakhir (semester 7 sampai dengan 11).";
+        
+        const r = cacheSiswa.nilai.rapor;
+        if(!r) { container.innerHTML = "<p class='text-center py-4 text-gray-400 font-medium'>Data Nilai Rapor tidak ditemukan.</p>"; return; }
+        
+        const mapels = ["Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "Ilmu Pengetahuan Alam dan Sosial"];
+        const keys = ['pancasila', 'indo', 'matematika', 'ipas'];
+        
+        html = `<table class="w-full border-collapse border border-gray-300 text-left">
+          <thead><tr class="bg-gray-100 text-center"><th rowspan="2" class="border border-gray-300 p-2 w-10">No.</th><th rowspan="2" class="border border-gray-300 p-2">Mata Pelajaran</th><th colspan="5" class="border border-gray-300 p-1">Nilai Rapor Semester</th><th rowspan="2" class="border border-gray-300 p-2 w-20 whitespace-normal">Rata-Rata Nilai</th></tr>
+            <tr class="bg-gray-50 text-center text-[10px]"><th class="border border-gray-300 p-1 w-8">7</th><th class="border border-gray-300 p-1 w-8">8</th><th class="border border-gray-300 p-1 w-8">9</th><th class="border border-gray-300 p-1 w-8">10</th><th class="border border-gray-300 p-1 w-8">11</th></tr>
+          </thead><tbody>`;
+          
+        let grandTotalRata = 0;
+        mapels.forEach((m, idx) => {
+          let scores = r[keys[idx]]; let sum = scores.reduce((a, b) => a + b, 0); let avg = sum / 5; grandTotalRata += avg;
+          html += `<tr><td class="border border-gray-300 p-1.5 text-center">${idx+1}</td><td class="border border-gray-300 p-1.5">${m}</td><td class="border border-gray-300 p-1.5 text-center">${scores[0]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[1]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[2]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[3]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[4]}</td><td class="border border-gray-300 p-1.5 text-center font-semibold bg-gray-50">${formatIndo(avg)}</td></tr>`;
+        });
+        
+        html += `<tr class="bg-indigo-50 font-bold"><td colspan="7" class="border border-gray-300 p-2 text-center">Rata-Rata Rapor</td><td class="border border-gray-300 p-2 text-center text-indigo-700">${formatIndo(grandTotalRata / 4)}</td></tr></tbody></table>`;
+        
+      } else if (jenis === 'TKA') {
+        judul.innerText = "Nilai TKA";
+        subJudul.innerText = "Hasil pelaksanaan Tes Kemampuan Akademik tahun 2026.";
+        
+        const tka = cacheSiswa.nilai.tka;
+        if(!tka || tka.length === 0) { html = "<p class='text-center py-4 text-gray-400 italic'>Belum ada rekaman nilai TKA.</p>"; } 
+        else {
+          html = `<table class="w-full border-collapse border border-gray-300 text-left"><thead><tr class="bg-gray-100"><th class="border border-gray-300 p-2 w-12 text-center">No.</th><th class="border border-gray-300 p-2 text-center">Mata Pelajaran</th><th class="border border-gray-300 p-2 w-24 text-center">Nilai</th><th class="border border-gray-300 p-2 w-32 text-center">Kategori Hasil</th></tr></thead><tbody>`;
+          
+          tka.forEach((item, idx) => {
+            let badge = "bg-gray-100 text-gray-700", kat = item.kategori ? item.kategori.toString().trim().toLowerCase() : "";
+            if(kat==="kurang") badge = "bg-red-100 text-red-700 border border-red-200";
+            else if(kat==="memadai") badge = "bg-yellow-100 text-yellow-700 border border-yellow-200";
+            else if(kat==="baik") badge = "bg-green-100 text-green-700 border border-green-200";
+            
+            html += `<tr><td class="border border-gray-300 p-2 text-center">${idx+1}</td><td class="border border-gray-300 p-2 font-medium">${item.mapel}</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(item.nilai)}</td><td class="border border-gray-300 p-2 text-center"><span class="${badge} text-[10px] px-2 py-0.5 rounded font-bold uppercase">${kat}</span></td></tr>`;
+          });
+          html += "</tbody></table>";
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    // MURNI DARI INDEXHTML1.TXT
+    function toggleBlurNilai() {
+      const target = document.getElementById('containerTabelNilai');
+      const icon = document.getElementById('iconMata');
+      nilaiDiburamkan = !nilaiDiburamkan;
+      
+      if (nilaiDiburamkan) {
+        target.classList.add('blur-sm', 'select-none', 'opacity-80');
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />`;
+      } else {
+        target.classList.remove('blur-sm', 'select-none', 'opacity-80');
+        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />`;
+      }
+    }
+
+    function tutupModalNilai() { document.getElementById('gradeModal').classList.add('hidden'); }
+
+    // MODIFIKASI SEDIKIT UNTUK AUDIO SAAT LOGOUT AGAR AUDIO MATI KETIKA TOMBOL KEMBALI DIKLIK
+    function logout() {
+      cacheSiswa = null;
+      document.getElementById('nisn').value = "";
+      document.getElementById('password').value = "";
+      document.getElementById('password').type = 'password';
+      document.getElementById('iconIntipPwd').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />`;
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('resultSection').classList.add('hidden');
+      document.getElementById('errorMsg').classList.add('hidden');
+      
+      try {
+        const a1 = document.getElementById('audioLulus');
+        const a2 = document.getElementById('audioTidakLulus');
+        if(a1) { a1.pause(); a1.currentTime = 0; }
+        if(a2) { a2.pause(); a2.currentTime = 0; }
+      } catch(e) {}
+    }
+
+    function bukaModal() {
+      document.getElementById('searchModal').classList.remove('hidden');
+      document.getElementById('inputNamaCari').value = "";
+      document.getElementById('hasilCariSiswa').innerHTML = "";
+    }
+    
+    function tutupModal() { document.getElementById('searchModal').classList.add('hidden'); }
+
+    function prosesCariNama() {
+      const kw = document.getElementById('inputNamaCari').value;
+      const res = document.getElementById('hasilCariSiswa');
+      if(kw.trim().length < 3) { res.innerHTML = "<p class='text-red-500 text-center'>Minimal 3 huruf!</p>"; return; }
+      res.innerHTML = "<p class='text-gray-400 text-center animate-pulse'>Mencari...</p>";
+      google.script.run.withSuccessHandler(function(response) {
+        if(response.status === "success") {
+          let h = "";
+          response.data.forEach(s => {
+            h += `<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border">
+              <div><p class="font-bold text-gray-800">${s.nama}</p><p class="text-gray-500 font-mono text-[10px]">NISN: ${s.nisn}</p></div>
+              <button onclick="pilihNisn('${s.nisn}')" class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg hover:bg-indigo-600 hover:text-white transition">Gunakan</button>
+            </div>`;
+          });
+          res.innerHTML = h;
+        } else { res.innerHTML = `<p class="text-red-500 text-center">${response.message}</p>`; }
+      }).cariNisnSiswa(kw);
+    }
+    
+    function pilihNisn(n) { document.getElementById('nisn').value = n; tutupModal(); document.getElementById('password').focus(); }
+  </script>
+</body>
+</html>
