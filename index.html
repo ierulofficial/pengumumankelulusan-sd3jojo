@@ -20,7 +20,31 @@
       <div class="w-20 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent mx-auto mt-2 rounded-full"></div>
     </div>
 
-    <div id="loginSection">
+    <div id="countdownSection" class="hidden text-center py-4 space-y-5 my-auto">
+      <div class="space-y-1 mb-2">
+        <h2 class="text-lg font-black text-indigo-950 uppercase tracking-wide">Menunggu Pengumuman Dibuka</h2>
+        <p class="text-[11px] text-gray-500">Portal kelulusan akan dibuka secara resmi dalam:</p>
+      </div>
+      <div class="flex justify-center gap-3">
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 w-16 shadow-sm flex flex-col items-center justify-center">
+          <p id="cd-hours" class="text-2xl font-black text-indigo-600 leading-none">00</p>
+          <p class="text-[9px] text-indigo-400 font-bold uppercase mt-1 tracking-wider">Jam</p>
+        </div>
+        <div class="text-2xl font-black text-indigo-200 mt-2">:</div>
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 w-16 shadow-sm flex flex-col items-center justify-center">
+          <p id="cd-minutes" class="text-2xl font-black text-indigo-600 leading-none">00</p>
+          <p class="text-[9px] text-indigo-400 font-bold uppercase mt-1 tracking-wider">Menit</p>
+        </div>
+        <div class="text-2xl font-black text-indigo-200 mt-2">:</div>
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 w-16 shadow-sm flex flex-col items-center justify-center">
+          <p id="cd-seconds" class="text-2xl font-black text-indigo-600 leading-none">00</p>
+          <p class="text-[9px] text-indigo-400 font-bold uppercase mt-1 tracking-wider">Detik</p>
+        </div>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-2 italic font-medium border border-gray-100 bg-gray-50 rounded-lg py-2 px-3 inline-block">Sistem akan otomatis membuka form login setelah hitung mundur selesai.<br>Harap bersabar.</p>
+    </div>
+
+    <div id="loginSection" class="hidden">
       <p class="text-center text-xs text-gray-500 mb-4">Silakan masukkan NISN dan Password untuk melihat kelulusan.</p>
       <div class="space-y-3">
         <div>
@@ -89,7 +113,7 @@
         </div>
         <div class="flex gap-2 w-full justify-center mt-1">
           <a id="linkSK" href="#" target="_blank" class="bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11px] py-1.5 px-3 rounded-lg border shadow-sm flex items-center justify-center transition flex-1 text-center">SK Kelulusan</a>
-          <a id="linkSKL" href="#" target="_blank" class="bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11px] py-1.5 px-3 rounded-lg border shadow-sm flex items-center justify-center transition flex-1 text-center">Unduh SKL</a>
+          <button type="button" onclick="bukaLamanSKL()" class="bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11px] py-1.5 px-3 rounded-lg border shadow-sm flex items-center justify-center transition flex-1 text-center cursor-pointer">SKL</button>
         </div>
       </div>
 
@@ -107,10 +131,37 @@
       <button onclick="logout()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium text-xs py-2 rounded-xl transition">Keluar Halaman</button>
     </div>
 
+    <div id="sklSection" class="hidden text-left space-y-4">
+      <div class="flex items-center gap-3 mb-2 border-b border-gray-200 pb-3">
+        <div>
+          <h2 class="text-lg font-black text-indigo-950 uppercase leading-tight">Konfirmasi Data SKL</h2>
+          <p class="text-[10px] text-gray-500">Mohon cek kesesuaian data Anda sebelum SKL dicetak.</p>
+        </div>
+      </div>
+
+      <div id="formKonfirmasi" class="space-y-3"></div>
+
+      <div class="pt-2 flex flex-col gap-2">
+        <button id="btnSubmitKonfirmasi" onclick="prosesKonfirmasi()" disabled class="w-full bg-gray-300 text-gray-500 font-bold text-sm py-3 rounded-xl transition flex items-center justify-center">Konfirmasi</button>
+        <a id="btnUnduhSKLFinal" href="#" target="_blank" class="w-full bg-gray-100 text-gray-400 font-bold text-sm py-3 rounded-xl border border-gray-200 text-center transition cursor-not-allowed pointer-events-none">Lihat dan Unduh SKL</a>
+        <button onclick="tutupLamanSKL()" class="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-600 font-bold text-xs py-2.5 rounded-xl transition mt-1">Kembali</button>
+      </div>
+    </div>
+
   </div>
 
-  <div class="text-center text-[10px] sm:text-[11px] text-indigo-950/60 font-semibold tracking-wide uppercase">
-    © 2026 Fachrul3. All Rights Reserved.
+  <div class="text-center text-[10px] sm:text-[11px] text-indigo-950/60 font-semibold tracking-wide">
+    © 2026 Fachrul3Josjis. All Rights Reserved.
+  </div>
+
+  <div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-4 w-full max-w-lg shadow-2xl relative">
+      <button onclick="tutupMap()" class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-lg transition">×</button>
+      <h3 class="font-bold text-gray-800 text-sm mb-2">Titik Koordinat Domisili</h3>
+      <div class="w-full h-64 bg-gray-200 rounded-xl overflow-hidden border border-gray-300">
+        <iframe id="mapIframe" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
 
   <div id="searchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -158,8 +209,56 @@
   </div>
 
   <script>
+    const API_URL = "URL_WEB_APP_GAS_ANDA_DISINI";
+
     let cacheSiswa = null;
     let nilaiDiburamkan = true;
+
+    // State penyimpan konfirmasi
+    let stateKonfirmasi = { nama: null, ttl: null, ortu: null, nis: null, nisn: null, koordinat: null };
+    let dataSudahTerkunci = false;
+
+    // --- FITUR BARU: MANAJEMEN WAKTU RILIS ---
+    const TARGET_TIME = new Date('2026-06-02T15:00:00+07:00').getTime(); // 2 Juni 2026 Pukul 15:00 WIB
+    let countdownInterval;
+
+    function initTimer() {
+      const now = new Date().getTime();
+      const diff = TARGET_TIME - now;
+      const loginSec = document.getElementById('loginSection');
+      const cdSec = document.getElementById('countdownSection');
+      
+      // Jika waktu sudah lewat target
+      if (diff <= 0) {
+        if (countdownInterval) clearInterval(countdownInterval);
+        cdSec.classList.add('hidden');
+        // Hanya tampilkan login jika kita tidak sedang berada di halaman hasil/SKL/Loading
+        if(document.getElementById('resultSection').classList.contains('hidden') && 
+           document.getElementById('sklSection').classList.contains('hidden') &&
+           document.getElementById('loadingSection').classList.contains('hidden')) {
+           loginSec.classList.remove('hidden');
+        }
+      } else {
+        // Jika belum waktunya
+        loginSec.classList.add('hidden');
+        cdSec.classList.remove('hidden');
+        
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        document.getElementById('cd-hours').innerText = h.toString().padStart(2, '0');
+        document.getElementById('cd-minutes').innerText = m.toString().padStart(2, '0');
+        document.getElementById('cd-seconds').innerText = s.toString().padStart(2, '0');
+      }
+    }
+
+    // Jalankan timer seketika web dirender
+    document.addEventListener('DOMContentLoaded', () => {
+      initTimer(); // Render pertama
+      countdownInterval = setInterval(initTimer, 1000); // Lanjutkan per detik
+    });
+    // ------------------------------------------
 
     function formatIndo(angka) {
       if (isNaN(angka) || angka === null || angka === "") return "-";
@@ -193,81 +292,71 @@
       errorMsg.innerText = msg; errorMsg.classList.remove('hidden');
     }
 
-    // MODIFIKASI: Penambahan Waktu Tunggu 10 Detik, Loading Section, dan UNLOCK AUDIO
     function prosesLogin() {
       const nisn = document.getElementById('nisn').value;
       const password = document.getElementById('password').value;
       const btnText = document.getElementById('btnText');
       const errorMsg = document.getElementById('errorMsg');
-
       if (!nisn || !password) { showError("Harap isi semua kolom!"); return; }
       
-      // --- PERBAIKAN SUARA: "Membuka kunci" izin pemutaran audio browser ---
       try {
         const audioL = document.getElementById('audioLulus');
         const audioT = document.getElementById('audioTidakLulus');
-        // Pancing browser memutar suara sesaat lalu segera dijeda
         audioL.play().then(() => { audioL.pause(); audioL.currentTime = 0; }).catch(e => console.log("Audio diizinkan nanti"));
         audioT.play().then(() => { audioT.pause(); audioT.currentTime = 0; }).catch(e => console.log("Audio diizinkan nanti"));
       } catch(e) {}
-      // ----------------------------------------------------------------------
 
       btnText.innerText = "Memeriksa data...";
       errorMsg.classList.add('hidden');
-      
-      // Matikan Form Login, Nyalakan Loading Layar Transisi
       document.getElementById('loginSection').classList.add('hidden');
       document.getElementById('loadingSection').classList.remove('hidden');
 
-      // Proteksi Server Timeout agar tidak stuck berputar
       const serverTimeout = setTimeout(function() {
         document.getElementById('loadingSection').classList.add('hidden');
-        document.getElementById('loginSection').classList.remove('hidden');
+        initTimer(); // Kembalikan visibilitas awal (bisa jadi timer atau login)
         showError("Koneksi server tidak merespon. Silakan coba lagi.");
       }, 15000);
 
-      // Pastikan fungsi backend dipanggil cekLogin sesuai codegs1.txt
-      google.script.run
-        .withSuccessHandler(function(response) {
-          clearTimeout(serverTimeout);
-          btnText.innerText = "Masuk & Lihat Hasil";
-          
-          if (response.status === "success") {
-            cacheSiswa = response; // codegs1.txt mengirim object murni (tanpa bungkus .data)
-            
-            // Tahan di Loading Screen selama persis 10 detik
-            setTimeout(function() {
-              document.getElementById('loadingSection').classList.add('hidden');
-              tampilkanHasil(cacheSiswa);
-            }, 10000);
-
-          } else { 
+            fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "cekLogin", payload: { nisn: nisn, password: password } })
+      })
+      .then(res => res.json())
+      .then(function(response) {
+        clearTimeout(serverTimeout);
+        btnText.innerText = "Masuk & Lihat Hasil";
+        
+        if (response.status === "success") {
+          cacheSiswa = response; 
+          setTimeout(function() {
             document.getElementById('loadingSection').classList.add('hidden');
-            document.getElementById('loginSection').classList.remove('hidden');
-            showError(response.message); 
-          }
-        })
-        .withFailureHandler(function(err) {
-          clearTimeout(serverTimeout);
-          btnText.innerText = "Masuk & Lihat Hasil";
+            tampilkanHasil(cacheSiswa);
+          }, 10000);
+        } else { 
           document.getElementById('loadingSection').classList.add('hidden');
-          document.getElementById('loginSection').classList.remove('hidden');
-          showError("Koneksi gagal: " + err.message);
-        }).cekLogin(nisn, password);
+          initTimer(); // Memastikan kembali ke state tampilan yang aman
+          showError(response.message); 
+        }
+      })
+      .catch(function(err) {
+        clearTimeout(serverTimeout);
+        btnText.innerText = "Masuk & Lihat Hasil";
+        document.getElementById('loadingSection').classList.add('hidden');
+        initTimer(); 
+        showError("Koneksi gagal: Cek koneksi internet Anda.");
+      });
     }
 
-    // MURNI DARI INDEXHTML1.TXT (+ Audio)
     function tampilkanHasil(data) {
       document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('countdownSection').classList.add('hidden');
       document.getElementById('resultSection').classList.remove('hidden');
       
       document.getElementById('studentName').innerText = data.nama;
       document.getElementById('studentNisnDisplay').innerText = "NISN. " + data.nisn;
       document.getElementById('studentPhoto').src = data.foto;
       document.getElementById('schoolNote').innerText = data.catatan || "-";
-      
       document.getElementById('linkSK').href = data.linkSK;
-      document.getElementById('linkSKL').href = data.linkSKL;
 
       const statusBox = document.getElementById('statusBox');
       const gradStatus = document.getElementById('graduationStatus');
@@ -278,7 +367,6 @@
         pemicuKonfeti();
         gradStatus.innerText = "LULUS";
         statusBox.className = "p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-3 bg-green-50 border-green-400 text-green-700 relative overflow-hidden";
-        // MODIFIKASI: Memicu suara saat Lulus
         try { document.getElementById('audioLulus').play(); } catch(e) {} 
         
         if (data.peringkat && data.peringkat !== "-" && !isNaN(data.peringkat)) {
@@ -294,12 +382,214 @@
       } else {
         gradStatus.innerText = "TIDAK LULUS";
         statusBox.className = "p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-3 bg-red-50 border-red-400 text-red-700 relative overflow-hidden";
-        // MODIFIKASI: Memicu suara saat Tidak Lulus
         try { document.getElementById('audioTidakLulus').play(); } catch(e) {}
       }
     }
 
-    // MURNI DARI INDEXHTML1.TXT (Karakter emoji yang sempat rusak telah diperbaiki)
+    // --- LOGIKA PERGANTIAN KE LAMAN KONFIRMASI (BERADA DI TAB YANG SAMA) ---
+
+    // Fungsi Render Daftar Pertanyaan
+    function renderItemKonfirmasi(id, label, nilaiAsli, tooltip = "") {
+      let tooltipHtml = tooltip ?
+        `<div class="relative group cursor-help ml-1">
+          <div class="bg-indigo-100 text-indigo-600 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold">?</div>
+          <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block w-48 bg-gray-800 text-white text-[9px] p-2 rounded shadow-lg z-10 text-center pointer-events-none">
+            ${tooltip}<div class="absolute top-full left-1/2 -ml-1 border-4 border-transparent border-t-gray-800"></div>
+          </div>
+        </div>` : "";
+
+      let mapBtn = (id === 'koordinat' && nilaiAsli && nilaiAsli !== "-") ?
+        `<button onclick="bukaMap('${nilaiAsli}')" class="ml-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-200 transition">Cek dalam Map</button>` : "";
+
+      return `
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex flex-col gap-2">
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <div>
+              <div class="flex items-center">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">${label}</p>
+                ${tooltipHtml}
+              </div>
+              <div class="flex items-center mt-0.5">
+                <p class="text-xs font-semibold text-gray-800 break-words">${nilaiAsli}</p>
+                ${mapBtn}
+              </div>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              <button id="btn-sesuai-${id}" onclick="pilihKonfirmasi('${id}', 'Sesuai')" class="btn-opsi-${id} bg-gray-200 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-lg transition focus:outline-none disabled:opacity-75 disabled:cursor-not-allowed">Sesuai</button>
+              <button id="btn-tsesuai-${id}" onclick="pilihKonfirmasi('${id}', 'Tidak Sesuai')" class="btn-opsi-${id} bg-gray-200 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-lg transition focus:outline-none disabled:opacity-75 disabled:cursor-not-allowed">Tidak Sesuai</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Navigasi Pindah Laman
+    function bukaLamanSKL() {
+      if(!cacheSiswa) return;
+      document.getElementById('resultSection').classList.add('hidden');
+      document.getElementById('sklSection').classList.remove('hidden');
+
+      const d = cacheSiswa.detailSKL || { ttl: "-", ortu: "-", nis: "-", koordinat: "-" };
+
+      const wadah = document.getElementById('formKonfirmasi');
+      wadah.innerHTML = 
+        renderItemKonfirmasi('nama', 'Nama Lengkap', cacheSiswa.nama.toUpperCase()) +
+        renderItemKonfirmasi('ttl', 'Tempat & Tanggal Lahir', d.ttl) +
+        renderItemKonfirmasi('ortu', 'Nama Orang Tua/Wali', d.ortu) +
+        renderItemKonfirmasi('nis', 'NIS', d.nis, "Lihat dokumen rapor atau cari melalui web internet") +
+        renderItemKonfirmasi('nisn', 'NISN', cacheSiswa.nisn, "Lihat dokumen rapor atau cari melalui web internet") +
+        renderItemKonfirmasi('koordinat', 'Titik Koordinat Domisili', d.koordinat);
+
+      const btnUnduh = document.getElementById('btnUnduhSKLFinal');
+      if (cacheSiswa.linkSKL && cacheSiswa.linkSKL !== "#" && cacheSiswa.linkSKL !== "") {
+        btnUnduh.href = cacheSiswa.linkSKL;
+      } else {
+        btnUnduh.removeAttribute('href');
+      }
+
+      dataSudahTerkunci = false;
+      
+      if (cacheSiswa.konfirmasi) {
+        dataSudahTerkunci = true;
+        Object.keys(cacheSiswa.konfirmasi).forEach(key => {
+           setTombolTerkunci(key, cacheSiswa.konfirmasi[key]);
+        });
+        cekSemuaKonfirmasi(); 
+      }
+    }
+
+    function tutupLamanSKL() {
+      document.getElementById('sklSection').classList.add('hidden');
+      document.getElementById('resultSection').classList.remove('hidden');
+    }
+
+    // Fungsi Baru: Mengunci & Mewarnai Tombol Permanen 
+    function setTombolTerkunci(id, nilaiTersimpan) {
+        stateKonfirmasi[id] = nilaiTersimpan;
+
+        let btnSesuai = document.getElementById(`btn-sesuai-${id}`);
+        let btnTidak = document.getElementById(`btn-tsesuai-${id}`);
+        
+        if (btnSesuai) btnSesuai.disabled = true;
+        if (btnTidak) btnTidak.disabled = true;
+
+        if (nilaiTersimpan === "Sesuai") {
+            if (btnSesuai) {
+                btnSesuai.classList.remove('bg-gray-200', 'text-gray-500');
+                btnSesuai.classList.add('bg-green-500', 'text-white');
+            }
+        } else if (nilaiTersimpan === "Tidak Sesuai") {
+            if (btnTidak) {
+                btnTidak.classList.remove('bg-gray-200', 'text-gray-500');
+                btnTidak.classList.add('bg-red-500', 'text-white');
+            }
+        }
+    }
+
+    function pilihKonfirmasi(id, status) {
+      if (dataSudahTerkunci) return;
+
+      stateKonfirmasi[id] = status;
+      const btns = document.querySelectorAll(`.btn-opsi-${id}`);
+      btns.forEach(b => {
+        b.classList.remove('bg-green-500', 'text-white', 'bg-red-500', 'bg-gray-200', 'text-gray-500');
+        b.classList.add('bg-gray-200', 'text-gray-500'); 
+      });
+
+      const btnAktif = document.getElementById(status === 'Sesuai' ? `btn-sesuai-${id}` : `btn-tsesuai-${id}`);
+      if(btnAktif) {
+        btnAktif.classList.remove('bg-gray-200', 'text-gray-500');
+        if (status === 'Sesuai') btnAktif.classList.add('bg-green-500', 'text-white');
+        else btnAktif.classList.add('bg-red-500', 'text-white');
+      }
+
+      cekSemuaKonfirmasi();
+    }
+
+    function cekSemuaKonfirmasi() {
+      const btnSubmit = document.getElementById('btnSubmitKonfirmasi');
+      const btnUnduh = document.getElementById('btnUnduhSKLFinal');
+      const semuaTerisi = Object.values(stateKonfirmasi).every(val => val !== null);
+
+      if (dataSudahTerkunci && cacheSiswa.konfirmasi) {
+        btnSubmit.innerText = "Sudah Konfirmasi";
+        btnSubmit.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'text-white', 'shadow-md');
+        btnSubmit.classList.add('bg-gray-300', 'text-gray-500');
+        btnSubmit.disabled = true;
+        
+        if (cacheSiswa.linkSKL && cacheSiswa.linkSKL !== "#" && cacheSiswa.linkSKL !== "") {
+          btnUnduh.classList.remove('bg-gray-100', 'text-gray-400', 'border-gray-200', 'cursor-not-allowed', 'pointer-events-none');
+          btnUnduh.classList.add('bg-indigo-50', 'text-indigo-700', 'border-indigo-200', 'hover:bg-indigo-100');
+        }
+        return;
+      }
+
+      if (semuaTerisi && !dataSudahTerkunci) {
+        btnSubmit.disabled = false;
+        btnSubmit.classList.remove('bg-gray-300', 'text-gray-500');
+        btnSubmit.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700', 'shadow-md');
+      }
+    }
+
+    function prosesKonfirmasi() {
+      const btnSubmit = document.getElementById('btnSubmitKonfirmasi');
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Menyimpan...";
+      dataSudahTerkunci = true;
+
+      const payload = {
+        nisnAsli: cacheSiswa.nisn,
+        status: stateKonfirmasi
+      };
+
+            fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "simpanKonfirmasi", payload: payload })
+      })
+      .then(res => res.json())
+      .then(function(response) {
+        cacheSiswa.konfirmasi = stateKonfirmasi;
+        
+        Object.keys(stateKonfirmasi).forEach(key => {
+          setTombolTerkunci(key, stateKonfirmasi[key]);
+        });
+        
+        cekSemuaKonfirmasi(); 
+        
+        let teksWA = `Halo Bapak/Ibu Guru, berikut adalah hasil konfirmasi data SKL atas nama *${cacheSiswa.nama}*:\n\n`;
+        teksWA += `- Nama: ${stateKonfirmasi.nama}\n`;
+        teksWA += `- Tempat & Tanggal Lahir: ${stateKonfirmasi.ttl}\n`;
+        teksWA += `- Nama Orang Tua: ${stateKonfirmasi.ortu}\n`;
+        teksWA += `- NIS: ${stateKonfirmasi.nis}\n`;
+        teksWA += `- NISN: ${stateKonfirmasi.nisn}\n`;
+        teksWA += `- Titik Koordinat: ${stateKonfirmasi.koordinat}\n\n`;
+        teksWA += `Mohon segera diproses. Terima kasih.`;
+        
+        window.open(`https://wa.me/6285747124453?text=${encodeURIComponent(teksWA)}`, '_blank');
+      })
+      .catch(function(err) {
+        alert("Gagal menyimpan data ke sistem. Cek koneksi Anda.");
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Konfirmasi";
+        dataSudahTerkunci = false;
+      });
+    }
+
+    function bukaMap(koordinat) {
+      if(!koordinat || koordinat === "-") return;
+      document.getElementById('mapModal').classList.remove('hidden');
+      const cleanCoord = koordinat.replace(/\s/g, ''); 
+      const url = `https://maps.google.com/maps?q=${encodeURIComponent(cleanCoord)}&z=17&output=embed`;
+      document.getElementById('mapIframe').src = url;
+    }
+    
+    function tutupMap() {
+      document.getElementById('mapModal').classList.add('hidden');
+      document.getElementById('mapIframe').src = "";
+    }
+
+    // ------------------------------------------------------------------------
+
     function bukaModalPeringkat(peringkat) {
       document.getElementById('rankModal').classList.remove('hidden');
       document.getElementById('rankNumberDisplay').innerText = peringkat;
@@ -309,7 +599,6 @@
       else if (p === 2) iconHTML = "🥈";
       else if (p === 3) iconHTML = "🥉";
       else iconHTML = "🏅";
-      
       document.getElementById('rankIconBox').innerText = iconHTML;
       pemicuKonfeti();
     }
@@ -318,10 +607,8 @@
       document.getElementById('rankModal').classList.add('hidden');
     }
 
-    // MURNI DARI INDEXHTML1.TXT (Tabel Nilai & Perilaku Blur asli)
     function bukaModalNilai(jenis) {
       if(!cacheSiswa || !cacheSiswa.nilai) return;
-      
       const modal = document.getElementById('gradeModal');
       const judul = document.getElementById('judulModalNilai');
       const subJudul = document.getElementById('subJudulModalNilai');
@@ -337,27 +624,21 @@
       if (jenis === 'Transkrip') {
         judul.innerText = "Transkrip Nilai";
         subJudul.innerText = "Rata-rata nilai rapor Kelas 5 (semester 9 dan 10) sampai dengan Kelas 6 (semester 11 dan 12).";
-        
         const t = cacheSiswa.nilai.transkrip;
-        const mapels = ["Pendidikan Agama dan Budi Pekerti", "Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "Ilmu Pengetahuan Alam dan Sosial", "Pendidikan Jasmani Olahraga dan Kesehatan", "Seni dan Budaya", "Bahasa Inggris"];
-        
+        const mapels = ["Pendidikan Agama dan Budi Pekerti", "Pendidikan Pancasila", "Bahasa Indonesia", "Matematika", "Ilmu Pengetahuan Alam dan Sosial", "Pendidikan Jasmani Olahraga dan Kesehatan", "Seni Budaya", "Bahasa Inggris"];
         let total = 0; mapels.forEach((m, idx) => total += t[idx]); total += t[8];
         let rata = formatIndo(total / 9);
-        
         html = `<table class="w-full border-collapse border border-gray-300 text-left">
           <thead><tr class="bg-gray-100 text-xs sm:text-sm"><th class="border border-gray-300 p-2 w-12 text-center">No.</th><th class="border border-gray-300 p-2 text-center">Mata Pelajaran</th><th class="border border-gray-300 p-2 w-24 text-center">Nilai</th></tr></thead>
           <tbody>`;
-        
         mapels.forEach((m, idx) => {
           html += `<tr><td class="border border-gray-300 p-2 text-center">${idx+1}</td><td class="border border-gray-300 p-2">${m}</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(t[idx])}</td></tr>`;
         });
-        
         html += `<tr><td class="border border-gray-300 p-2 text-center">9</td><td class="border border-gray-300 p-2 font-semibold">Muatan Lokal</td><td class="border border-gray-300 p-2 text-center"></td></tr>`;
         html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">a. Bahasa Jawa</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(t[8])}</td></tr>`;
         html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">b. -</td><td class="border border-gray-300 p-2 text-center">-</td></tr>`;
         html += `<tr><td class="border border-gray-300 p-2 text-center"></td><td class="border border-gray-300 p-2 pl-6">c. -</td><td class="border border-gray-300 p-2 text-center">-</td></tr>`;
         html += `<tr class="bg-indigo-50 font-bold"><td colspan="2" class="border border-gray-300 p-2 text-center">Rata-rata</td><td class="border border-gray-300 p-2 text-center text-indigo-700">${rata}</td></tr></tbody></table>`;
-        
       } else if (jenis === 'Rapor') {
         judul.innerText = "Nilai Rapor";
         subJudul.innerText = "Rata-rata nilai rapor 5 semester terakhir (semester 7 sampai dengan 11).";
@@ -372,15 +653,12 @@
           <thead><tr class="bg-gray-100 text-center"><th rowspan="2" class="border border-gray-300 p-2 w-10">No.</th><th rowspan="2" class="border border-gray-300 p-2">Mata Pelajaran</th><th colspan="5" class="border border-gray-300 p-1">Nilai Rapor Semester</th><th rowspan="2" class="border border-gray-300 p-2 w-20 whitespace-normal">Rata-Rata Nilai</th></tr>
             <tr class="bg-gray-50 text-center text-[10px]"><th class="border border-gray-300 p-1 w-8">7</th><th class="border border-gray-300 p-1 w-8">8</th><th class="border border-gray-300 p-1 w-8">9</th><th class="border border-gray-300 p-1 w-8">10</th><th class="border border-gray-300 p-1 w-8">11</th></tr>
           </thead><tbody>`;
-          
         let grandTotalRata = 0;
         mapels.forEach((m, idx) => {
           let scores = r[keys[idx]]; let sum = scores.reduce((a, b) => a + b, 0); let avg = sum / 5; grandTotalRata += avg;
           html += `<tr><td class="border border-gray-300 p-1.5 text-center">${idx+1}</td><td class="border border-gray-300 p-1.5">${m}</td><td class="border border-gray-300 p-1.5 text-center">${scores[0]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[1]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[2]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[3]}</td><td class="border border-gray-300 p-1.5 text-center">${scores[4]}</td><td class="border border-gray-300 p-1.5 text-center font-semibold bg-gray-50">${formatIndo(avg)}</td></tr>`;
         });
-        
         html += `<tr class="bg-indigo-50 font-bold"><td colspan="7" class="border border-gray-300 p-2 text-center">Rata-Rata Rapor</td><td class="border border-gray-300 p-2 text-center text-indigo-700">${formatIndo(grandTotalRata / 4)}</td></tr></tbody></table>`;
-        
       } else if (jenis === 'TKA') {
         judul.innerText = "Nilai TKA";
         subJudul.innerText = "Hasil pelaksanaan Tes Kemampuan Akademik tahun 2026.";
@@ -389,13 +667,11 @@
         if(!tka || tka.length === 0) { html = "<p class='text-center py-4 text-gray-400 italic'>Belum ada rekaman nilai TKA.</p>"; } 
         else {
           html = `<table class="w-full border-collapse border border-gray-300 text-left"><thead><tr class="bg-gray-100"><th class="border border-gray-300 p-2 w-12 text-center">No.</th><th class="border border-gray-300 p-2 text-center">Mata Pelajaran</th><th class="border border-gray-300 p-2 w-24 text-center">Nilai</th><th class="border border-gray-300 p-2 w-32 text-center">Kategori Hasil</th></tr></thead><tbody>`;
-          
           tka.forEach((item, idx) => {
             let badge = "bg-gray-100 text-gray-700", kat = item.kategori ? item.kategori.toString().trim().toLowerCase() : "";
             if(kat==="kurang") badge = "bg-red-100 text-red-700 border border-red-200";
             else if(kat==="memadai") badge = "bg-yellow-100 text-yellow-700 border border-yellow-200";
             else if(kat==="baik") badge = "bg-green-100 text-green-700 border border-green-200";
-            
             html += `<tr><td class="border border-gray-300 p-2 text-center">${idx+1}</td><td class="border border-gray-300 p-2 font-medium">${item.mapel}</td><td class="border border-gray-300 p-2 text-center font-semibold">${formatIndo(item.nilai)}</td><td class="border border-gray-300 p-2 text-center"><span class="${badge} text-[10px] px-2 py-0.5 rounded font-bold uppercase">${kat}</span></td></tr>`;
           });
           html += "</tbody></table>";
@@ -404,7 +680,6 @@
       container.innerHTML = html;
     }
 
-    // MURNI DARI INDEXHTML1.TXT
     function toggleBlurNilai() {
       const target = document.getElementById('containerTabelNilai');
       const icon = document.getElementById('iconMata');
@@ -421,17 +696,22 @@
 
     function tutupModalNilai() { document.getElementById('gradeModal').classList.add('hidden'); }
 
-    // MODIFIKASI SEDIKIT UNTUK AUDIO SAAT LOGOUT AGAR AUDIO MATI KETIKA TOMBOL KEMBALI DIKLIK
     function logout() {
       cacheSiswa = null;
       document.getElementById('nisn').value = "";
       document.getElementById('password').value = "";
       document.getElementById('password').type = 'password';
       document.getElementById('iconIntipPwd').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />`;
-      document.getElementById('loginSection').classList.remove('hidden');
+      
       document.getElementById('resultSection').classList.add('hidden');
+      document.getElementById('sklSection').classList.add('hidden'); 
       document.getElementById('errorMsg').classList.add('hidden');
       
+      initTimer(); // Memastikan visibilitas login bergantung pada waktu saat ini
+
+      stateKonfirmasi = { nama: null, ttl: null, ortu: null, nis: null, nisn: null, koordinat: null };
+      dataSudahTerkunci = false;
+
       try {
         const a1 = document.getElementById('audioLulus');
         const a2 = document.getElementById('audioTidakLulus');
@@ -453,7 +733,12 @@
       const res = document.getElementById('hasilCariSiswa');
       if(kw.trim().length < 3) { res.innerHTML = "<p class='text-red-500 text-center'>Minimal 3 huruf!</p>"; return; }
       res.innerHTML = "<p class='text-gray-400 text-center animate-pulse'>Mencari...</p>";
-      google.script.run.withSuccessHandler(function(response) {
+            fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: "cariNisn", payload: { keyword: kw } })
+      })
+      .then(res => res.json())
+      .then(function(response) {
         if(response.status === "success") {
           let h = "";
           response.data.forEach(s => {
@@ -464,7 +749,10 @@
           });
           res.innerHTML = h;
         } else { res.innerHTML = `<p class="text-red-500 text-center">${response.message}</p>`; }
-      }).cariNisnSiswa(kw);
+      })
+      .catch(function(err) {
+         res.innerHTML = `<p class="text-red-500 text-center">Gagal terhubung ke server.</p>`;
+      });
     }
     
     function pilihNisn(n) { document.getElementById('nisn').value = n; tutupModal(); document.getElementById('password').focus(); }
