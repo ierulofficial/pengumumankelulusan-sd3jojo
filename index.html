@@ -434,9 +434,9 @@
 
       const wadah = document.getElementById('formKonfirmasi');
       wadah.innerHTML = 
-        renderItemKonfirmasi('nama', 'Nama Lengkap', cacheSiswa.nama.toUpperCase()) +
-        renderItemKonfirmasi('ttl', 'Tempat & Tanggal Lahir', d.ttl) +
-        renderItemKonfirmasi('ortu', 'Nama Orang Tua/Wali', d.ortu) +
+        renderItemKonfirmasi('nama', 'Nama Lengkap', cacheSiswa.nama.toUpperCase(), "Sesuai Akta Kelahiran siswa") +
+        renderItemKonfirmasi('ttl', 'Tempat & Tanggal Lahir', d.ttl, "Sesuai Akta Kelahiran siswa") +
+        renderItemKonfirmasi('ortu', 'Nama Orang Tua/Wali', d.ortu, "Sesuai Akta Kelahiran siswa") +
         renderItemKonfirmasi('nis', 'NIS', d.nis, "Lihat dokumen rapor atau cari melalui web internet") +
         renderItemKonfirmasi('nisn', 'NISN', cacheSiswa.nisn, "Lihat dokumen rapor atau cari melalui web internet") +
         renderItemKonfirmasi('koordinat', 'Titik Koordinat Domisili', d.koordinat);
