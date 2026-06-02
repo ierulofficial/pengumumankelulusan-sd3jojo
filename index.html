@@ -565,7 +565,16 @@
         teksWA += `- Titik Koordinat: ${stateKonfirmasi.koordinat}\n\n`;
         teksWA += `Mohon segera diproses. Terima kasih.`;
         
-        window.open(`https://wa.me/6285747124453?text=${encodeURIComponent(teksWA)}`, '_blank');
+        const urlWA = `https://wa.me/6285747124453?text=${encodeURIComponent(teksWA)}`;
+        
+        // Cek apakah web sedang dibuka di dalam aplikasi Android (Kodular)
+        if (typeof window.AppInventor !== "undefined") {
+          // Kirim link WA sebagai String ke blok Kodular
+          window.AppInventor.setWebViewString(urlWA);
+        } else {
+          // Jika dibuka di browser biasa (Chrome, Safari, dll), buka di tab baru
+          window.open(urlWA, '_blank');
+        }
       })
       .catch(function(err) {
         alert("Gagal menyimpan data ke sistem. Cek koneksi Anda.");
